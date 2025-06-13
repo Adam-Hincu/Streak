@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="TextView.CounterValue" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textSize">56sp</item>
+        <item name="android:textColor">@color/purple_main</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:gravity">center</item>
+    </style>
+</resources> 

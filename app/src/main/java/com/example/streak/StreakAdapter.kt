@@ -1,5 +1,6 @@
 package com.example.streak
 
+import android.animation.ObjectAnimator
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +9,12 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import android.view.GestureDetector
+import android.view.MotionEvent
+import androidx.core.animation.doOnEnd
+import androidx.core.view.GestureDetectorCompat
+import androidx.fragment.app.FragmentActivity
+import kotlin.math.abs
 
 class StreakAdapter(
     private val streaks: MutableList<StreakItem>,
@@ -27,15 +34,19 @@ class StreakAdapter(
         val pauseButton: MaterialButton = view.findViewById(R.id.pause_button)
         val resetButton: MaterialButton = view.findViewById(R.id.reset_button)
         val deleteButton: MaterialButton = view.findViewById(R.id.delete_button)
+        
         // Counter views
+        val counterContainer: View? = view.findViewById(R.id.counter_container)
         val counterValue: TextView? = view.findViewById(R.id.counter_value)
-        val counterControls: View? = view.findViewById(R.id.counter_controls)
-        val buttonMinusOne: MaterialButton? = view.findViewById(R.id.button_minus_one)
-        val buttonPlusOne: MaterialButton? = view.findViewById(R.id.button_plus_one)
-        val buttonResetCounter: MaterialButton? = view.findViewById(R.id.button_reset_counter)
-        val buttonDeleteCounter: MaterialButton? = view.findViewById(R.id.button_delete_counter)
-        val buttonCustomAdd: MaterialButton? = view.findViewById(R.id.button_custom_add)
-        val buttonCustomRetract: MaterialButton? = view.findViewById(R.id.button_custom_retract)
+        val counterActionButton: MaterialButton? = view.findViewById(R.id.counter_action_button)
+        val swipeHintLeft: View? = view.findViewById(R.id.swipe_hint_left)
+        val swipeHintRight: View? = view.findViewById(R.id.swipe_hint_right)
+        
+        // For managing gestures
+        var gestureDetector: GestureDetectorCompat? = null
+        
+        // Animation states
+        var isAnimating = false
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -61,48 +72,14 @@ class StreakAdapter(
             holder.resetButton.visibility = View.GONE
             holder.deleteButton.visibility = View.GONE
             // Show counter UI
-            holder.counterValue?.visibility = View.VISIBLE
-            holder.counterControls?.visibility = View.VISIBLE
+            holder.counterContainer?.visibility = View.VISIBLE
+            holder.counterActionButton?.visibility = View.VISIBLE
             holder.counterValue?.text = streak.counterValue.toString()
-            // Button actions
-            holder.buttonPlusOne?.setOnClickListener {
-                streak.incrementCounter(1)
-                notifyItemChanged(position)
-            }
-            holder.buttonMinusOne?.setOnClickListener {
-                streak.decrementCounter(1)
-                notifyItemChanged(position)
-            }
-            holder.buttonResetCounter?.setOnClickListener {
-                MaterialAlertDialogBuilder(holder.itemView.context)
-                    .setTitle(holder.itemView.context.getString(R.string.reset_title))
-                    .setMessage(holder.itemView.context.getString(R.string.reset_message, streak.title))
-                    .setPositiveButton(holder.itemView.context.getString(R.string.reset)) { _, _ ->
-                        streak.resetCounter()
-                        notifyItemChanged(position)
-                    }
-                    .setNegativeButton(holder.itemView.context.getString(R.string.cancel), null)
-                    .show()
-            }
-            holder.buttonDeleteCounter?.setOnClickListener {
-                MaterialAlertDialogBuilder(holder.itemView.context)
-                    .setTitle(holder.itemView.context.getString(R.string.delete_title))
-                    .setMessage(holder.itemView.context.getString(R.string.delete_message, streak.title))
-                    .setPositiveButton(holder.itemView.context.getString(R.string.delete)) { _, _ ->
-                        val pos = holder.adapterPosition
-                        if (pos != RecyclerView.NO_POSITION) {
-                            streaks.removeAt(pos)
-                            notifyItemRemoved(pos)
-                        }
-                    }
-                    .setNegativeButton(holder.itemView.context.getString(R.string.cancel), null)
-                    .show()
-            }
-            holder.buttonCustomAdd?.setOnClickListener {
-                showCustomAmountDialog(holder, streak, position, isAdd = true)
-            }
-            holder.buttonCustomRetract?.setOnClickListener {
-                showCustomAmountDialog(holder, streak, position, isAdd = false)
+            // Setup gesture detection for swipe left/right to change counter
+            setupCounterGestures(holder, streak, position)
+            // Setup action button to show bottom sheet
+            holder.counterActionButton?.setOnClickListener {
+                showCounterOptionsSheet(holder, streak, position)
             }
         } else {
             // Show timer UI
@@ -121,8 +98,8 @@ class StreakAdapter(
             holder.resetButton.visibility = View.VISIBLE
             holder.deleteButton.visibility = View.VISIBLE
             // Hide counter UI
-            holder.counterValue?.visibility = View.GONE
-            holder.counterControls?.visibility = View.GONE
+            holder.counterContainer?.visibility = View.GONE
+            holder.counterActionButton?.visibility = View.GONE
             updatePauseButtonIcon(holder, streak)
             holder.pauseButton.setOnClickListener {
                 val context = holder.itemView.context
@@ -179,6 +156,111 @@ class StreakAdapter(
         }
     }
     
+    private fun setupCounterGestures(holder: ViewHolder, streak: StreakItem, position: Int) {
+        val counterContainer = holder.counterContainer ?: return
+        
+        // Set up gesture detector
+        holder.gestureDetector = GestureDetectorCompat(
+            counterContainer.context, 
+            object : GestureDetector.SimpleOnGestureListener() {
+                override fun onFling(
+                    e1: MotionEvent?,
+                    e2: MotionEvent,
+                    velocityX: Float,
+                    velocityY: Float
+                ): Boolean {
+                    if (holder.isAnimating) return false
+                    
+                    // Check horizontal swipe
+                    val distanceX = e2.x - (e1?.x ?: 0f)
+                    if (abs(distanceX) > 100) { // Minimum swipe distance
+                        if (distanceX > 0) {
+                            // Swipe right - increment
+                            animateCounterChange(holder, streak, position, true)
+                        } else {
+                            // Swipe left - decrement
+                            animateCounterChange(holder, streak, position, false)
+                        }
+                        return true
+                    }
+                    return false
+                }
+            }
+        )
+        
+        // Set touch listener to detect swipes
+        counterContainer.setOnTouchListener { _, event ->
+            holder.gestureDetector?.onTouchEvent(event) ?: false
+        }
+    }
+    
+    private fun animateCounterChange(holder: ViewHolder, streak: StreakItem, position: Int, isIncrement: Boolean) {
+        if (holder.isAnimating) return
+        
+        holder.isAnimating = true
+        val counterText = holder.counterValue ?: return
+        
+        // Animate the counter value out
+        val animOut = ObjectAnimator.ofFloat(
+            counterText,
+            "alpha",
+            1f, 0f
+        ).apply {
+            duration = 150
+            doOnEnd {
+                // Update the counter value
+                if (isIncrement) {
+                    streak.incrementCounter(1)
+                } else {
+                    streak.decrementCounter(1)
+                }
+                counterText.text = streak.counterValue.toString()
+                
+                // Animate the new value in
+                ObjectAnimator.ofFloat(
+                    counterText,
+                    "alpha",
+                    0f, 1f
+                ).apply { 
+                    duration = 150
+                    doOnEnd {
+                        holder.isAnimating = false
+                    }
+                }.start()
+            }
+        }
+        animOut.start()
+    }
+    
+    private fun showCounterOptionsSheet(holder: ViewHolder, streak: StreakItem, position: Int) {
+        val activity = holder.itemView.context as? FragmentActivity ?: return
+        
+        val bottomSheet = BottomSheetCounterOptions(
+            streak = streak,
+            onAddClicked = { amount ->
+                streak.incrementCounter(amount)
+                notifyItemChanged(position)
+            },
+            onRetractClicked = { amount ->
+                streak.decrementCounter(amount)
+                notifyItemChanged(position)
+            },
+            onResetClicked = {
+                streak.resetCounter()
+                notifyItemChanged(position)
+            },
+            onDeleteClicked = {
+                val pos = holder.adapterPosition
+                if (pos != RecyclerView.NO_POSITION) {
+                    streaks.removeAt(pos)
+                    notifyItemRemoved(pos)
+                }
+            }
+        )
+        
+        bottomSheet.show(activity.supportFragmentManager, "CounterOptionsBottomSheet")
+    }
+    
     private fun updateStatusIndicator(holder: ViewHolder, streak: StreakItem) {
         val statusColor = if (streak.isActive) {
             R.color.green_active
@@ -195,28 +277,6 @@ class StreakAdapter(
         } else {
             holder.pauseButton.setIconResource(R.drawable.ic_play)
         }
-    }
-
-    private fun showCustomAmountDialog(holder: ViewHolder, streak: StreakItem, position: Int, isAdd: Boolean) {
-        val context = holder.itemView.context
-        val input = android.widget.EditText(context)
-        input.inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_SIGNED
-        val title = if (isAdd) context.getString(R.string.custom_add_title) else context.getString(R.string.custom_retract_title)
-        val positive = if (isAdd) context.getString(R.string.add) else context.getString(R.string.retract)
-        MaterialAlertDialogBuilder(context)
-            .setTitle(title)
-            .setView(input)
-            .setPositiveButton(positive) { _, _ ->
-                val value = input.text.toString().toIntOrNull() ?: 0
-                if (isAdd) {
-                    streak.incrementCounter(value)
-                } else {
-                    streak.decrementCounter(value)
-                }
-                notifyItemChanged(position)
-            }
-            .setNegativeButton(context.getString(R.string.cancel), null)
-            .show()
     }
 
     override fun getItemCount() = streaks.size

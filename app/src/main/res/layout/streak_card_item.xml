@@ -207,102 +207,65 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!-- Counter Value Display (hidden for timer streaks) -->
-        <TextView
-            android:id="@+id/counter_value"
-            style="@style/TextView.StreakTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:gravity="center"
-            android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@id/activity_title"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            tools:text="42" />
-
-        <!-- Counter Controls (hidden for timer streaks) -->
-        <LinearLayout
-            android:id="@+id/counter_controls"
+        <RelativeLayout
+            android:id="@+id/counter_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
             android:layout_marginTop="24dp"
+            android:layout_marginBottom="12dp"
             android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@id/counter_value"
+            app:layout_constraintTop_toBottomOf="@id/activity_title">
+
+            <TextView
+                android:id="@+id/counter_value"
+                style="@style/TextView.CounterValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:textSize="56sp"
+                android:textColor="@color/purple_main"
+                android:fontFamily="sans-serif-light"
+                tools:text="42" />
+
+            <ImageView
+                android:id="@+id/swipe_hint_left"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="24dp"
+                android:layout_toStartOf="@id/counter_value"
+                android:alpha="0.4"
+                android:src="@drawable/ic_remove"
+                android:contentDescription="@string/swipe_left_hint" />
+
+            <ImageView
+                android:id="@+id/swipe_hint_right"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="24dp"
+                android:layout_toEndOf="@id/counter_value"
+                android:alpha="0.4"
+                android:src="@drawable/ic_add"
+                android:contentDescription="@string/swipe_right_hint" />
+        </RelativeLayout>
+
+        <!-- Simple Counter Controls - Just one action button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/counter_action_button"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="16dp"
+            android:visibility="gone"
+            app:icon="@drawable/ic_more_options"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp"
+            app:cornerRadius="28dp"
+            app:backgroundTint="@color/light_purple_bg"
+            app:iconTint="@color/purple_main"
+            app:layout_constraintTop_toBottomOf="@id/counter_container"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/button_minus_one"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                app:icon="@drawable/ic_remove"
-                app:iconTint="@color/button_delete"
-                app:backgroundTint="@color/light_purple_bg"
-                app:cornerRadius="24dp"
-                app:elevation="0dp"
-                app:iconSize="24dp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/button_plus_one"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginStart="16dp"
-                app:icon="@drawable/ic_add"
-                app:iconTint="@color/button_yellow"
-                app:backgroundTint="@color/light_purple_bg"
-                app:cornerRadius="24dp"
-                app:elevation="0dp"
-                app:iconSize="24dp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/button_reset_counter"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginStart="16dp"
-                app:icon="@drawable/ic_reset"
-                app:iconTint="@color/button_reset"
-                app:backgroundTint="@color/light_purple_bg"
-                app:cornerRadius="24dp"
-                app:elevation="0dp"
-                app:iconSize="24dp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/button_delete_counter"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginStart="16dp"
-                app:icon="@drawable/ic_delete"
-                app:iconTint="@color/button_delete"
-                app:backgroundTint="@color/light_purple_bg"
-                app:cornerRadius="24dp"
-                app:elevation="0dp"
-                app:iconSize="24dp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/button_custom_add"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginStart="16dp"
-                app:icon="@drawable/ic_add_custom"
-                app:iconTint="@color/button_yellow"
-                app:backgroundTint="@color/light_purple_bg"
-                app:cornerRadius="24dp"
-                app:elevation="0dp"
-                app:iconSize="24dp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/button_custom_retract"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginStart="16dp"
-                app:icon="@drawable/ic_remove_custom"
-                app:iconTint="@color/button_delete"
-                app:backgroundTint="@color/light_purple_bg"
-                app:cornerRadius="24dp"
-                app:elevation="0dp"
-                app:iconSize="24dp" />
-        </LinearLayout>
+            app:layout_constraintEnd_toEndOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView> 

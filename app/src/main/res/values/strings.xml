@@ -58,4 +58,11 @@
     <string name="custom_add_title">Add Custom Amount</string>
     <string name="custom_retract_title">Retract Custom Amount</string>
     <string name="retract">Retract</string>
+
+    <!-- New string resources for gesture hints -->
+    <string name="swipe_left_hint">Decrease counter value</string>
+    <string name="swipe_right_hint">Increase counter value</string>
+
+    <!-- New string resources for counter options -->
+    <string name="counter_options">Counter Options</string>
 </resources>
