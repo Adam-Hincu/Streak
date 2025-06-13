@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="purple_main">#7754B3</color>
+    <color name="light_purple_bg">#F5F3F9</color>
+    <color name="green_active">#4CD964</color>
+    <color name="grey_inactive">#CCCCCC</color>
+    <color name="button_yellow">#FFC107</color>
+    <color name="button_reset">#7754B3</color>
+    <color name="button_delete">#FF3B30</color>
+    <color name="card_background">#FFFFFF</color>
+    <color name="background">#F9F9F9</color>
+</resources>
