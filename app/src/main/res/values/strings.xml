@@ -48,4 +48,14 @@
     <!-- Font references -->
     <string name="roboto_regular">sans-serif</string>
     <string name="roboto_medium">sans-serif-medium</string>
+
+    <!-- New string resources for streak type selection dialog -->
+    <string name="select_streak_type">Select Streak Type</string>
+    <string name="timer_streak">Timer Streak</string>
+    <string name="counter_streak">Counter Streak</string>
+
+    <!-- New string resources for custom add/retract dialogs for counter streaks -->
+    <string name="custom_add_title">Add Custom Amount</string>
+    <string name="custom_retract_title">Retract Custom Amount</string>
+    <string name="retract">Retract</string>
 </resources>

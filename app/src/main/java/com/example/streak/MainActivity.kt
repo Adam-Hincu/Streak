@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.streak.databinding.ActivityMainBinding
 import com.example.streak.databinding.DialogAddStreakBinding
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.materialswitch.MaterialSwitch
 import org.json.JSONArray
@@ -93,6 +94,27 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showAddStreakDialog() {
+        val dialogBinding = LayoutInflater.from(this).inflate(R.layout.dialog_streak_type_selection, null)
+        
+        val dialog = MaterialAlertDialogBuilder(this)
+            .setView(dialogBinding)
+            .setCancelable(true)
+            .create()
+
+        dialogBinding.findViewById<MaterialButton>(R.id.button_timer).setOnClickListener {
+            dialog.dismiss()
+            showAddTimerStreakDialog()
+        }
+
+        dialogBinding.findViewById<MaterialButton>(R.id.button_counter).setOnClickListener {
+            dialog.dismiss()
+            showAddCounterStreakDialog()
+        }
+
+        dialog.show()
+    }
+
+    private fun showAddTimerStreakDialog() {
         val dialogBinding = DialogAddStreakBinding.inflate(LayoutInflater.from(this))
 
         val dialog = MaterialAlertDialogBuilder(this)
@@ -110,8 +132,34 @@ class MainActivity : AppCompatActivity() {
         dialog.show()
     }
 
+    private fun showAddCounterStreakDialog() {
+        val dialogBinding = DialogAddStreakBinding.inflate(LayoutInflater.from(this))
+
+        val dialog = MaterialAlertDialogBuilder(this)
+            .setTitle(getString(R.string.add_streak_title))
+            .setView(dialogBinding.root)
+            .setPositiveButton(getString(R.string.add)) { _, _ ->
+                val title = dialogBinding.editTextTitle.text.toString()
+                if (title.isNotEmpty()) {
+                    addNewCounterStreak(title)
+                }
+            }
+            .setNegativeButton(getString(R.string.cancel), null)
+            .create()
+
+        dialog.show()
+    }
+
     private fun addNewStreak(title: String) {
         val newStreak = StreakItem(title = title)
+        streakItems.add(newStreak)
+        streakAdapter.notifyItemInserted(streakItems.size - 1)
+        binding.streaksRecyclerView.smoothScrollToPosition(streakItems.size - 1)
+        saveStreaks()
+    }
+
+    private fun addNewCounterStreak(title: String) {
+        val newStreak = StreakItem(title = title, type = "counter", counterValue = 0)
         streakItems.add(newStreak)
         streakAdapter.notifyItemInserted(streakItems.size - 1)
         binding.streaksRecyclerView.smoothScrollToPosition(streakItems.size - 1)

@@ -13,7 +13,9 @@ data class StreakItem(
     var isActive: Boolean = true,
     var startTimeMillis: Long = System.currentTimeMillis(),
     var pausedDurationMillis: Long = 0L,
-    var lastPausedAt: Long? = null
+    var lastPausedAt: Long? = null,
+    var type: String = "timer", // "timer" or "counter"
+    var counterValue: Int = 0 // Only used for counter streaks
 ) {
     fun getElapsedMillis(now: Long = System.currentTimeMillis()): Long {
         return if (isActive) {
@@ -53,6 +55,19 @@ data class StreakItem(
         lastPausedAt = if (isActive) null else now
     }
 
+    fun incrementCounter(amount: Int = 1) {
+        if (type == "counter") counterValue += amount
+    }
+
+    fun decrementCounter(amount: Int = 1) {
+        if (type == "counter") counterValue -= amount
+        if (counterValue < 0) counterValue = 0
+    }
+
+    fun resetCounter() {
+        if (type == "counter") counterValue = 0
+    }
+
     fun toJson(): JSONObject {
         return JSONObject().apply {
             put("id", id)
@@ -61,6 +76,8 @@ data class StreakItem(
             put("startTimeMillis", startTimeMillis)
             put("pausedDurationMillis", pausedDurationMillis)
             put("lastPausedAt", lastPausedAt)
+            put("type", type)
+            put("counterValue", counterValue)
         }
     }
 
@@ -72,7 +89,9 @@ data class StreakItem(
                 isActive = obj.optBoolean("isActive", true),
                 startTimeMillis = obj.optLong("startTimeMillis", System.currentTimeMillis()),
                 pausedDurationMillis = obj.optLong("pausedDurationMillis", 0L),
-                lastPausedAt = if (obj.has("lastPausedAt") && !obj.isNull("lastPausedAt")) obj.getLong("lastPausedAt") else null
+                lastPausedAt = if (obj.has("lastPausedAt") && !obj.isNull("lastPausedAt")) obj.getLong("lastPausedAt") else null,
+                type = obj.optString("type", "timer"),
+                counterValue = obj.optInt("counterValue", 0)
             )
         }
     }

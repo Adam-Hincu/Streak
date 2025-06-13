@@ -60,4 +60,14 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
     </style>
+
+    <style name="StreakTypeDialogButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="cornerRadius">28dp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:minHeight">64dp</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingTop">18dp</item>
+        <item name="android:paddingBottom">18dp</item>
+    </style>
 </resources>
