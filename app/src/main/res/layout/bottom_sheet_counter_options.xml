@@ -3,15 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
-    android:paddingBottom="36dp">
+    android:background="@drawable/bottom_sheet_background"
+    android:paddingBottom="32dp">
 
     <!-- Handle at top of sheet -->
     <View
         android:id="@+id/bottom_sheet_handle"
         android:layout_width="40dp"
         android:layout_height="4dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="12dp"
         android:background="@color/grey_inactive"
         android:alpha="0.5"
         app:layout_constraintEnd_toEndOf="parent"
@@ -23,11 +23,11 @@
         android:id="@+id/bottom_sheet_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="20dp"
         android:text="@string/counter_options"
-        android:textAppearance="?attr/textAppearanceHeadline6"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:textSize="18sp"
+        android:fontFamily="sans-serif-medium"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/bottom_sheet_handle" />
@@ -36,8 +36,9 @@
     <NumberPicker
         android:id="@+id/number_picker"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="28dp"
+        android:theme="@style/NumberPickerTheme"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/bottom_sheet_title" />
@@ -56,22 +57,21 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_remove_custom"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_marginEnd="16dp"
             android:text="@string/retract"
-            android:textColor="@color/button_delete"
-            app:cornerRadius="20dp"
-            app:strokeColor="@color/button_delete"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+            android:textColor="@color/white"
+            android:backgroundTint="@color/button_delete"
+            app:cornerRadius="24dp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_add_custom"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:backgroundTint="@color/green_active"
             android:text="@string/add"
             android:textColor="@color/white"
-            app:cornerRadius="20dp" />
+            app:cornerRadius="24dp" />
     </LinearLayout>
 
     <!-- Divider -->
@@ -79,11 +79,11 @@
         android:id="@+id/divider"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="32dp"
         android:background="@color/grey_inactive"
-        android:alpha="0.5"
+        android:alpha="0.3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/add_remove_buttons" />
@@ -92,9 +92,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="32dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -103,25 +103,23 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_delete"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="12dp"
             android:layout_weight="1"
             android:text="@string/delete"
-            android:textColor="@color/button_delete"
-            app:cornerRadius="20dp"
-            app:strokeColor="@color/button_delete"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+            android:textColor="@color/white"
+            android:backgroundTint="@color/button_delete"
+            app:cornerRadius="24dp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_reset"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="12dp"
             android:layout_weight="1"
             android:text="@string/reset"
-            android:textColor="@color/button_reset"
-            app:cornerRadius="20dp"
-            app:strokeColor="@color/button_reset"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+            android:textColor="@color/white"
+            android:backgroundTint="@color/purple_main"
+            app:cornerRadius="24dp" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout> 

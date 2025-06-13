@@ -16,6 +16,8 @@ class BottomSheetCounterOptions(
     private val onDeleteClicked: () -> Unit
 ) : BottomSheetDialogFragment() {
 
+    override fun getTheme() = R.style.BottomSheetDialogTheme
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -32,6 +34,7 @@ class BottomSheetCounterOptions(
             maxValue = 100
             value = 1
             wrapSelectorWheel = false
+            // We'll use XML styling instead of reflection
         }
         
         view.findViewById<MaterialButton>(R.id.button_add_custom).setOnClickListener {
